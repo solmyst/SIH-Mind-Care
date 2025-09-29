@@ -41,26 +41,26 @@ export function MoodTransition({ currentMood }: MoodTransitionProps) {
           initial={{ opacity: 0, scale: 0.5 }}
           animate={{ opacity: 1, scale: 1 }}
           exit={{ opacity: 0, scale: 0.5 }}
-          className="fixed top-4 right-4 z-50 bg-white/90 backdrop-blur-sm rounded-2xl p-4 shadow-lg border"
+          className="fixed top-4 right-4 left-4 sm:left-auto sm:right-4 z-50 bg-white/90 backdrop-blur-sm rounded-2xl p-3 sm:p-4 shadow-lg border max-w-sm mx-auto sm:mx-0"
           style={{ borderColor: `var(--mood-primary)` }}
         >
-          <div className="flex items-center gap-3">
-            <div className="flex items-center gap-2">
-              <span className="text-2xl">{moodEmojis[previousMood]}</span>
+          <div className="flex items-center gap-2 sm:gap-3">
+            <div className="flex items-center gap-1 sm:gap-2">
+              <span className="text-lg sm:text-2xl">{moodEmojis[previousMood]}</span>
               <motion.div
-                animate={{ x: [0, 10, 0] }}
+                animate={{ x: [0, 8, 0] }}
                 transition={{ duration: 0.5, repeat: 2 }}
-                className="text-gray-400"
+                className="text-gray-400 text-sm sm:text-base"
               >
                 →
               </motion.div>
-              <span className="text-2xl">{moodEmojis[currentMood]}</span>
+              <span className="text-lg sm:text-2xl">{moodEmojis[currentMood]}</span>
             </div>
-            <div className="text-sm">
-              <p className="font-medium" style={{ color: `var(--mood-primary)` }}>
+            <div className="text-xs sm:text-sm min-w-0 flex-1">
+              <p className="font-medium truncate" style={{ color: `var(--mood-primary)` }}>
                 Mood Updated
               </p>
-              <p className="text-gray-600 text-xs">
+              <p className="text-gray-600 text-xs truncate">
                 AI detected: {currentMood}
               </p>
             </div>

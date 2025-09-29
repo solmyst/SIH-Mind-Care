@@ -237,76 +237,78 @@ export function QuickChat({ onNavigate, currentMood, selectedLanguage, onMoodCha
         onToggleMobile={() => setShowSidebar(!showSidebar)}
       />
 
-      {/* Main Content */}
-      <div className={`${sidebarCollapsed ? 'lg:ml-16' : 'lg:ml-64'} transition-all duration-300 p-6`}>
-        {/* Header */}
+      {/* Main Content - Responsive */}
+      <div className={`${sidebarCollapsed ? 'lg:ml-16' : 'lg:ml-64'} transition-all duration-300 p-2 sm:p-4 lg:p-6`}>
+        {/* Header - Responsive */}
         <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
-          className="flex items-center justify-between mb-6"
+          className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-4 sm:mb-6 gap-4"
         >
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-3 sm:gap-4 w-full sm:w-auto">
             <Button
               variant="ghost"
               onClick={() => setShowSidebar(true)}
-              className="lg:hidden rounded-full p-3"
+              className="lg:hidden rounded-full p-2 sm:p-3 flex-shrink-0"
               style={{ color: `var(--mood-primary)` }}
             >
-              <Menu className="w-5 h-5" />
+              <Menu className="w-4 h-4 sm:w-5 sm:h-5" />
             </Button>
-            <div>
-              <h1 className="text-3xl" style={{ color: `var(--mood-primary)` }}>
+            <div className="min-w-0 flex-1">
+              <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold truncate" style={{ color: `var(--mood-primary)` }}>
                 AI Chat Assistant
               </h1>
-              <p className="text-gray-600">
+              <p className="text-sm sm:text-base text-gray-600 hidden sm:block">
                 Your personal mental health companion
               </p>
             </div>
           </div>
 
-          <div className="flex items-center gap-2">
-            <div className="w-3 h-3 bg-green-400 rounded-full animate-pulse" />
-            <span className="text-sm text-gray-600">
+          <div className="flex items-center gap-2 text-xs sm:text-sm flex-shrink-0">
+            <div className="w-2 h-2 sm:w-3 sm:h-3 bg-green-400 rounded-full animate-pulse" />
+            <span className="text-gray-600">
               AI {t.online}
             </span>
-            <span className="text-xs text-gray-500 ml-2">
-              Mood detection: {currentMood}
+            <span className="text-gray-500 hidden sm:inline">
+              • {currentMood}
             </span>
           </div>
         </motion.div>
 
-        {/* Chat Container */}
-        <div className="max-w-4xl mx-auto">
-          <Card className="h-[600px] bg-white/70 backdrop-blur-sm rounded-3xl border-0 shadow-xl flex flex-col">
-            {/* Chat Header */}
-            <div className="p-6 border-b border-gray-200">
+        {/* Chat Container - Responsive */}
+        <div className="w-full max-w-4xl mx-auto px-2 sm:px-0">
+          <Card className="h-[calc(100vh-8rem)] sm:h-[600px] bg-white/70 backdrop-blur-sm rounded-2xl sm:rounded-3xl border-0 shadow-xl flex flex-col">
+            {/* Chat Header - Responsive */}
+            <div className="p-3 sm:p-4 lg:p-6 border-b border-gray-200">
               <div className="flex items-center justify-between">
-                <div className="flex items-center gap-3">
+                <div className="flex items-center gap-2 sm:gap-3 min-w-0 flex-1">
                   <div 
-                    className="w-10 h-10 rounded-full flex items-center justify-center"
+                    className="w-8 h-8 sm:w-10 sm:h-10 rounded-full flex items-center justify-center flex-shrink-0"
                     style={{ background: `var(--mood-gradient)` }}
                   >
-                    <Bot className="w-5 h-5 text-white" />
+                    <Bot className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
                   </div>
-                  <div>
-                    <h3 className="text-lg" style={{ color: `var(--mood-primary)` }}>
+                  <div className="min-w-0 flex-1">
+                    <h3 className="text-sm sm:text-base lg:text-lg font-medium truncate" style={{ color: `var(--mood-primary)` }}>
                       AI Mental Health Assistant
                     </h3>
-                    <p className="text-sm text-gray-600">
-                      Current mood: <span className="font-medium" style={{ color: `var(--mood-primary)` }}>{currentMood}</span> {moodEmojis[currentMood]}
+                    <p className="text-xs sm:text-sm text-gray-600 truncate">
+                      <span className="hidden sm:inline">Current mood: </span>
+                      <span className="font-medium" style={{ color: `var(--mood-primary)` }}>{currentMood}</span> 
+                      <span className="ml-1">{moodEmojis[currentMood]}</span>
                     </p>
                   </div>
                 </div>
 
-                <Button variant="ghost" size="sm" className="rounded-full">
-                  <MoreHorizontal className="w-4 h-4" />
+                <Button variant="ghost" size="sm" className="rounded-full p-1 sm:p-2 flex-shrink-0">
+                  <MoreHorizontal className="w-3 h-3 sm:w-4 sm:h-4" />
                 </Button>
               </div>
             </div>
 
-            {/* Messages Area */}
-            <div className="flex-1 p-6 overflow-y-auto space-y-4">
+            {/* Messages Area - Responsive */}
+            <div className="flex-1 p-3 sm:p-4 lg:p-6 overflow-y-auto space-y-3 sm:space-y-4">
               {messages.length === 0 && (
                 <div className="flex flex-col items-center justify-center h-full text-center space-y-4">
                   <div 
@@ -349,9 +351,9 @@ export function QuickChat({ onNavigate, currentMood, selectedLanguage, onMoodCha
                       </div>
                     )}
                     
-                    <div className={`max-w-md ${msg.sender === 'user' ? 'text-right' : ''}`}>
+                    <div className={`max-w-xs sm:max-w-sm lg:max-w-md ${msg.sender === 'user' ? 'text-right' : ''}`}>
                       <div 
-                        className={`p-4 rounded-2xl text-sm leading-relaxed ${
+                        className={`p-3 sm:p-4 rounded-xl sm:rounded-2xl text-xs sm:text-sm leading-relaxed ${
                           msg.sender === 'user' 
                             ? 'text-white' 
                             : 'bg-gray-100 text-gray-700'
@@ -422,42 +424,42 @@ export function QuickChat({ onNavigate, currentMood, selectedLanguage, onMoodCha
               <div ref={messagesEndRef} />
             </div>
 
-            {/* Message Input */}
-            <div className="p-6 border-t border-gray-200">
-              <div className="flex gap-3 items-end">
+            {/* Message Input - Responsive */}
+            <div className="p-3 sm:p-4 lg:p-6 border-t border-gray-200">
+              <div className="flex gap-2 sm:gap-3 items-end">
                 <div className="flex-1 relative">
                   <textarea
                     value={message}
                     onChange={(e) => setMessage(e.target.value)}
                     onKeyDown={handleKeyPress}
                     placeholder={t.typeMessage}
-                    className="w-full p-4 border border-gray-200 rounded-2xl resize-none focus:outline-none focus:ring-2 focus:ring-opacity-50 pr-24"
+                    className="w-full p-3 sm:p-4 border border-gray-200 rounded-xl sm:rounded-2xl resize-none focus:outline-none focus:ring-2 focus:ring-opacity-50 pr-16 sm:pr-24 text-sm sm:text-base"
                     style={{ '--tw-ring-color': `var(--mood-primary)` } as any}
                     rows={1}
                   />
                   
-                  <div className="absolute right-3 bottom-3 flex gap-2">
+                  <div className="absolute right-2 sm:right-3 bottom-2 sm:bottom-3 flex gap-1 sm:gap-2">
                     <Button
                       variant="ghost"
                       size="sm"
-                      className="rounded-full p-2"
+                      className="rounded-full p-1 sm:p-2 hidden sm:flex"
                       onClick={() => setIsRecording(!isRecording)}
                       title={t.voiceMessage}
                     >
                       {isRecording ? (
-                        <MicOff className="w-4 h-4 text-red-500" />
+                        <MicOff className="w-3 h-3 sm:w-4 sm:h-4 text-red-500" />
                       ) : (
-                        <Mic className="w-4 h-4 text-gray-500" />
+                        <Mic className="w-3 h-3 sm:w-4 sm:h-4 text-gray-500" />
                       )}
                     </Button>
                     
                     <Button
                       variant="ghost"
                       size="sm"
-                      className="rounded-full p-2"
+                      className="rounded-full p-1 sm:p-2 hidden sm:flex"
                       title={t.attachFile}
                     >
-                      <Paperclip className="w-4 h-4 text-gray-500" />
+                      <Paperclip className="w-3 h-3 sm:w-4 sm:h-4 text-gray-500" />
                     </Button>
                   </div>
                 </div>
@@ -465,10 +467,10 @@ export function QuickChat({ onNavigate, currentMood, selectedLanguage, onMoodCha
                 <Button
                   onClick={sendMessage}
                   disabled={!message.trim()}
-                  className="rounded-full p-3"
+                  className="rounded-full p-2 sm:p-3 flex-shrink-0"
                   style={{ background: `var(--mood-gradient)` }}
                 >
-                  <Send className="w-5 h-5" />
+                  <Send className="w-4 h-4 sm:w-5 sm:h-5" />
                 </Button>
               </div>
             </div>

@@ -1,0 +1,266 @@
+/* Responsive Design Enhancements for Mind Care Live */
+
+/* Mobile-first responsive breakpoints */
+@media (max-width: 640px) {
+  /* Mobile styles */
+  .mobile-padding {
+    padding: 0.75rem;
+  }
+  
+  .mobile-text {
+    font-size: 0.875rem;
+  }
+  
+  .mobile-hide {
+    display: none;
+  }
+  
+  .mobile-full-width {
+    width: 100%;
+  }
+  
+  /* Chat specific mobile styles */
+  .chat-container-mobile {
+    height: calc(100vh - 4rem);
+    border-radius: 1rem;
+  }
+  
+  .message-mobile {
+    max-width: 85%;
+    padding: 0.75rem;
+    font-size: 0.875rem;
+  }
+  
+  /* Sidebar mobile styles */
+  .sidebar-mobile {
+    width: 100%;
+    height: 100vh;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 50;
+  }
+}
+
+@media (min-width: 641px) and (max-width: 768px) {
+  /* Tablet styles */
+  .tablet-padding {
+    padding: 1rem;
+  }
+  
+  .tablet-text {
+    font-size: 1rem;
+  }
+  
+  .chat-container-tablet {
+    height: calc(100vh - 6rem);
+    border-radius: 1.5rem;
+  }
+  
+  .message-tablet {
+    max-width: 70%;
+    padding: 1rem;
+  }
+}
+
+@media (min-width: 769px) {
+  /* Desktop styles */
+  .desktop-padding {
+    padding: 1.5rem;
+  }
+  
+  .desktop-text {
+    font-size: 1.125rem;
+  }
+  
+  .chat-container-desktop {
+    height: 600px;
+    border-radius: 1.5rem;
+  }
+  
+  .message-desktop {
+    max-width: 28rem;
+    padding: 1rem;
+  }
+}
+
+/* Responsive utilities */
+.responsive-container {
+  width: 100%;
+  max-width: 100%;
+  margin: 0 auto;
+  padding: 0.5rem;
+}
+
+@media (min-width: 640px) {
+  .responsive-container {
+    padding: 1rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .responsive-container {
+    max-width: 1024px;
+    padding: 1.5rem;
+  }
+}
+
+@media (min-width: 1280px) {
+  .responsive-container {
+    max-width: 1280px;
+    padding: 2rem;
+  }
+}
+
+/* Touch-friendly button sizes */
+@media (max-width: 640px) {
+  .touch-button {
+    min-height: 44px;
+    min-width: 44px;
+    padding: 0.75rem;
+  }
+  
+  .touch-input {
+    min-height: 44px;
+    padding: 0.75rem;
+    font-size: 16px; /* Prevents zoom on iOS */
+  }
+}
+
+/* Responsive text scaling */
+.responsive-heading {
+  font-size: 1.25rem;
+  line-height: 1.75rem;
+}
+
+@media (min-width: 640px) {
+  .responsive-heading {
+    font-size: 1.5rem;
+    line-height: 2rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .responsive-heading {
+    font-size: 1.875rem;
+    line-height: 2.25rem;
+  }
+}
+
+/* Responsive spacing */
+.responsive-spacing {
+  margin-bottom: 1rem;
+}
+
+@media (min-width: 640px) {
+  .responsive-spacing {
+    margin-bottom: 1.5rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .responsive-spacing {
+    margin-bottom: 2rem;
+  }
+}
+
+/* Responsive grid layouts */
+.responsive-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1rem;
+}
+
+@media (min-width: 640px) {
+  .responsive-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.5rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .responsive-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2rem;
+  }
+}
+
+/* Responsive card layouts */
+.responsive-card {
+  padding: 1rem;
+  border-radius: 0.75rem;
+}
+
+@media (min-width: 640px) {
+  .responsive-card {
+    padding: 1.5rem;
+    border-radius: 1rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .responsive-card {
+    padding: 2rem;
+    border-radius: 1.5rem;
+  }
+}
+
+/* Responsive modal/dialog */
+.responsive-modal {
+  width: 100%;
+  height: 100%;
+  border-radius: 0;
+}
+
+@media (min-width: 640px) {
+  .responsive-modal {
+    width: 90%;
+    height: auto;
+    max-width: 500px;
+    border-radius: 1rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .responsive-modal {
+    max-width: 600px;
+    border-radius: 1.5rem;
+  }
+}
+
+/* Responsive navigation */
+.responsive-nav {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: white;
+  border-top: 1px solid #e5e7eb;
+  padding: 0.5rem;
+}
+
+@media (min-width: 1024px) {
+  .responsive-nav {
+    position: static;
+    border-top: none;
+    background: transparent;
+    padding: 0;
+  }
+}
+
+/* Responsive sidebar */
+.responsive-sidebar {
+  transform: translateX(-100%);
+  transition: transform 0.3s ease-in-out;
+}
+
+.responsive-sidebar.open {
+  transform: translateX(0);
+}
+
+@media (min-width: 1024px) {
+  .responsive-sidebar {
+    transform: translateX(0);
+    position: static;
+  }
+}
