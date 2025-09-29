@@ -13,6 +13,7 @@ import { PsychologicalTests } from './components/PsychologicalTests';
 import { MiniGames } from './components/MiniGames';
 import { CustomGoals } from './components/CustomGoals';
 import { AdminDashboard } from './components/AdminDashboard';
+import { MoodTransition } from './components/MoodTransition';
 
 export type MoodType = 'happy' | 'calm' | 'sad' | 'anxious' | 'stressed' | 'neutral';
 
@@ -116,13 +117,26 @@ export default function App() {
   useEffect(() => {
     const theme = moodThemes[currentMood];
     const root = document.documentElement;
-    
+
     root.style.setProperty('--mood-primary', theme.primary);
     root.style.setProperty('--mood-secondary', theme.secondary);
     root.style.setProperty('--mood-accent', theme.accent);
     root.style.setProperty('--mood-gradient', theme.gradient);
     root.style.setProperty('--mood-text-light', theme.textLight);
     root.style.setProperty('--mood-background', theme.background);
+  }, [currentMood]);
+
+  // Listen for mood changes from AI detection
+  useEffect(() => {
+    const handleMoodChange = (event: CustomEvent<MoodType>) => {
+      if (event.detail && event.detail !== currentMood) {
+        setCurrentMood(event.detail);
+        console.log('🎭 Mood detected by AI:', event.detail);
+      }
+    };
+
+    window.addEventListener('moodChange', handleMoodChange as EventListener);
+    return () => window.removeEventListener('moodChange', handleMoodChange as EventListener);
   }, [currentMood]);
 
   const renderPage = () => {
@@ -138,7 +152,7 @@ export default function App() {
       case 'dashboard':
         return <Dashboard onNavigate={setCurrentPage} currentMood={currentMood} userProfile={userProfile} setUserProfile={setUserProfile} selectedLanguage={selectedLanguage} onMoodChange={setCurrentMood} onLanguageChange={setSelectedLanguage} />;
       case 'chat':
-        return <QuickChat onNavigate={setCurrentPage} currentMood={currentMood} selectedLanguage={selectedLanguage} />;
+        return <QuickChat onNavigate={setCurrentPage} currentMood={currentMood} selectedLanguage={selectedLanguage} onMoodChange={setCurrentMood} />;
       case 'peer-support':
         return <PeerSupport onNavigate={setCurrentPage} currentMood={currentMood} />;
       case 'appointments':
@@ -159,7 +173,7 @@ export default function App() {
   };
 
   return (
-    <div 
+    <div
       className="min-h-screen transition-all duration-1000 ease-in-out"
       style={{ background: moodThemes[currentMood].background }}
     >
@@ -175,6 +189,9 @@ export default function App() {
           {renderPage()}
         </motion.div>
       </AnimatePresence>
+
+      {/* Mood transition notification */}
+      <MoodTransition currentMood={currentMood} />
     </div>
   );
 }

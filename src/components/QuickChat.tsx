@@ -1,24 +1,18 @@
-importimport React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { generateGeminiContent, SupportedMood } from './aiGemini';
 import { motion, AnimatePresence } from 'motion/react';
 import { Button } from './ui/button';
 import { Card } from './ui/card';
 import { Badge } from './ui/badge';
 import { SharedSidebar } from './SharedSidebar';
-impo                        {msg.sender === 'user' && <span role="img" aria-label="user">👤</span>}t { ArrowLeft, Send, Bot, Mic, MicOff, Paperclip, MoreHorizontal, Menu } from 'lucide-react';eact, { useState, useRef, useEffect } from 'react';
-import { generateGeminiContent, SupportedMood } from './aiGemini';
-import { motion, AnimatePresence } from 'motion/react';
-import { Button } from './ui/button';
-import { Card } from './ui/card';
-import { Badge } from './ui/badge';
-import { SharedSidebar } from './SharedSidebar';
-imp                        {msg.sender === 'user' && <span role="img" aria-label="user">👤</span>}rt { ArrowLeft, Send, Bot, Mic, MicOff, Paperclip, MoreHorizontal, Menu } from 'lucide-react';
+import { Send, Bot, Mic, MicOff, Paperclip, MoreHorizontal, Menu } from 'lucide-react';
 import type { MoodType, PageType } from '../App';
 
 interface QuickChatProps {
   onNavigate: (page: PageType) => void;
   currentMood: MoodType;
   selectedLanguage: string;
+  onMoodChange?: (mood: MoodType) => void;
 }
 
 interface Message {
@@ -28,6 +22,7 @@ interface Message {
   timestamp: Date;
   isTyping?: boolean;
   supportType?: 'emotional' | 'practical' | 'crisis';
+  detectedMood?: MoodType | null;
 }
 
 const translations = {
@@ -61,7 +56,7 @@ const translations = {
   }
 };
 
-export function QuickChat({ onNavigate, currentMood, selectedLanguage }: QuickChatProps) {
+export function QuickChat({ onNavigate, currentMood, selectedLanguage, onMoodChange }: QuickChatProps) {
   const [message, setMessage] = useState('');
   const [messages, setMessages] = useState<Message[]>([]);
   const [isRecording, setIsRecording] = useState(false);
@@ -72,35 +67,29 @@ export function QuickChat({ onNavigate, currentMood, selectedLanguage }: QuickCh
 
   const t = translations[selectedLanguage as keyof typeof translations] || translations.en;
 
-  const aiMessages: Message[] = [
-    {
-      id: '1',
-      text: 'Hello! I\'m your personal AI mental health assistant. I\'m here to listen, understand, and provide personalized support based on how you\'re feeling. How are you doing today?',
-      sender: 'ai',
-      timestamp: new Date(Date.now() - 5000),
-      supportType: 'emotional'
-    }
-  ];
-
+  // Initialize with empty messages - no dummy data
   useEffect(() => {
-    setMessages(aiMessages);
+    setMessages([]);
   }, []);
+
+  // Add welcome message when user first interacts
+  const addWelcomeMessage = () => {
+    const welcomeMessage: Message = {
+      id: 'welcome',
+      text: `Hello! I'm your personal AI mental health assistant. I'm here to listen, understand, and provide personalized support. I can also detect your mood from our conversation and adjust the theme accordingly. How are you feeling today?`,
+      sender: 'ai',
+      timestamp: new Date(),
+      supportType: 'emotional',
+      detectedMood: 'neutral'
+    };
+    setMessages([welcomeMessage]);
+  };
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
 
-  // Mood mapping for theme change
-
-  // Mood mapping for theme and emoji
-  const moodKeywords: Record<string, MoodType> = {
-    happy: 'happy',
-    calm: 'calm',
-    sad: 'sad',
-    anxious: 'anxious',
-    stressed: 'stressed',
-    neutral: 'neutral',
-  };
+  // Mood mapping for emoji display
 
   const moodEmojis: Record<MoodType, string> = {
     happy: '😊',
@@ -124,20 +113,15 @@ export function QuickChat({ onNavigate, currentMood, selectedLanguage }: QuickCh
     return null;
   }
 
-  // Detect if crisis detected in Gemini JSON
-  function isCrisisDetected(response: string): boolean {
-    try {
-      const jsonMatch = response.match(/\{[\s\S]*?\}/);
-      if (!jsonMatch) return false;
-      const json = JSON.parse(jsonMatch[0]);
-      return json.crisis_detected === 'true';
-    } catch {
-      return false;
-    }
-  }
+
 
   const sendMessage = async () => {
     if (!message.trim()) return;
+
+    // Add welcome message if this is the first message
+    if (messages.length === 0) {
+      addWelcomeMessage();
+    }
 
     const newMessage: Message = {
       id: Date.now().toString(),
@@ -152,14 +136,38 @@ export function QuickChat({ onNavigate, currentMood, selectedLanguage }: QuickCh
     setAiTyping(true);
     try {
       // Get response from Gemini including text, detected mood, and crisis status
+      console.log('📤 Sending message to Gemini:', message);
       const { text: aiText, mood: detectedMood, isCrisis } = await generateGeminiContent(message);
+      console.log('📥 Gemini response:', { aiText: aiText.substring(0, 100) + '...', detectedMood, isCrisis });
       setAiTyping(false);
 
       // Update theme based on detected mood from Gemini's JSON
       if (detectedMood) {
         const mappedMood = mapSupportedMoodToMoodType(detectedMood);
-        const event = new CustomEvent('moodChange', { detail: mappedMood });
-        window.dispatchEvent(event);
+        if (mappedMood && mappedMood !== currentMood) {
+          console.log('🎭 Mood change detected:', currentMood, '->', mappedMood);
+          
+          // Call parent's mood change handler
+          if (onMoodChange) {
+            onMoodChange(mappedMood);
+          }
+          
+          // Also dispatch event for other components
+          const event = new CustomEvent('moodChange', { detail: mappedMood });
+          window.dispatchEvent(event);
+          
+          // Show a subtle notification about mood change
+          setTimeout(() => {
+            setMessages((prev: Message[]) => [...prev, {
+              id: (Date.now() + 2).toString(),
+              text: `🎭 I detected your mood as "${mappedMood}" and adjusted the theme colors to match. The interface now reflects your emotional state.`,
+              sender: 'ai',
+              timestamp: new Date(),
+              supportType: 'emotional',
+              detectedMood: mappedMood,
+            }]);
+          }, 500);
+        }
       }
 
       // Determine support type based on response
@@ -172,12 +180,16 @@ export function QuickChat({ onNavigate, currentMood, selectedLanguage }: QuickCh
         supportType = 'emotional';
       }
       
+      // Get the mapped mood for display
+      const mappedMoodForDisplay = detectedMood ? mapSupportedMoodToMoodType(detectedMood) : null;
+      
       setMessages((prev: Message[]) => [...prev, {
         id: (Date.now() + 1).toString(),
         text: aiText,
         sender: 'ai',
         timestamp: new Date(),
         supportType,
+        detectedMood: mappedMoodForDisplay,
       }]);
     } catch (e) {
       setAiTyping(false);
@@ -190,50 +202,7 @@ export function QuickChat({ onNavigate, currentMood, selectedLanguage }: QuickCh
     }
   };
 
-  const getResponseType = (userMessage: string): 'emotional' | 'practical' | 'crisis' => {
-    const lowerMessage = userMessage.toLowerCase();
-    if (lowerMessage.includes('help') || lowerMessage.includes('how to') || lowerMessage.includes('what should')) {
-      return 'practical';
-    }
-    if (lowerMessage.includes('crisis') || lowerMessage.includes('emergency') || lowerMessage.includes('hurt')) {
-      return 'crisis';
-    }
-    return 'emotional';
-  };
 
-  const getAIResponse = (userMessage: string, mood: MoodType) => {
-    const lowerMessage = userMessage.toLowerCase();
-    
-    // Crisis responses
-    if (lowerMessage.includes('hurt myself') || lowerMessage.includes('suicide') || lowerMessage.includes('kill myself')) {
-      return "I'm very concerned about what you're sharing. Your life has value and you deserve support. Please reach out to a crisis helpline or emergency services immediately. In the US, you can call 988 for the Suicide & Crisis Lifeline. I'm here to support you, but professional help is crucial right now.";
-    }
-    
-    // Practical responses based on keywords
-    if (lowerMessage.includes('sleep') || lowerMessage.includes('tired')) {
-      return "Sleep issues can really impact our mental health. Try establishing a consistent bedtime routine, avoiding screens 1 hour before bed, and creating a calm environment. Would you like some specific sleep hygiene tips tailored to your situation?";
-    }
-    
-    if (lowerMessage.includes('study') || lowerMessage.includes('exam') || lowerMessage.includes('assignment')) {
-      return "Academic stress is very common. Breaking tasks into smaller chunks, using the Pomodoro Technique (25 min work, 5 min break), and setting realistic goals can help. What specific aspect of studying is challenging you most?";
-    }
-    
-    if (lowerMessage.includes('friends') || lowerMessage.includes('social') || lowerMessage.includes('lonely')) {
-      return "Social connections are so important for our wellbeing. It's normal to feel lonely sometimes. Consider joining campus clubs, study groups, or activities that align with your interests. Small steps like saying hi to classmates can make a difference. What social activities have you enjoyed in the past?";
-    }
-    
-    // Mood-based responses
-    const responses = {
-      happy: "I'm so glad to hear you're feeling positive! That energy is wonderful. What's been contributing to this good mood? Sometimes understanding what brings us joy helps us recreate those moments.",
-      calm: "It sounds like you're in a peaceful space right now. That's really valuable. What practices or situations help you maintain this sense of calm? I'd love to help you build on these positive experiences.",
-      sad: "I hear you, and I want you to know that what you're feeling is completely valid. Sadness is a natural part of the human experience. Would you like to talk about what's been weighing on your heart, or would you prefer some gentle coping strategies?",
-      anxious: "Anxiety can feel overwhelming, but you're not alone in this. Let's focus on what we can control right now. Would you like to try a quick breathing exercise with me, or would it help to talk through what's creating these anxious feelings?",
-      stressed: "Stress can feel like a heavy weight. You're being proactive by reaching out, which shows real strength. Would you like to explore some stress management techniques, or would it help to talk through what's creating this pressure in your life?",
-      neutral: "Thank you for connecting with me today. Everyone's mental health journey is unique, and I'm here to support you wherever you are. What would feel most helpful right now - talking through something specific, learning some wellness strategies, or just having someone listen?"
-    };
-    
-    return responses[mood] || responses.neutral;
-  };
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter' && !e.shiftKey) {
@@ -301,6 +270,9 @@ export function QuickChat({ onNavigate, currentMood, selectedLanguage }: QuickCh
             <span className="text-sm text-gray-600">
               AI {t.online}
             </span>
+            <span className="text-xs text-gray-500 ml-2">
+              Mood detection: {currentMood}
+            </span>
           </div>
         </motion.div>
 
@@ -322,7 +294,7 @@ export function QuickChat({ onNavigate, currentMood, selectedLanguage }: QuickCh
                       AI Mental Health Assistant
                     </h3>
                     <p className="text-sm text-gray-600">
-                      Personalized support based on your current mood: {currentMood}
+                      Current mood: <span className="font-medium" style={{ color: `var(--mood-primary)` }}>{currentMood}</span> {moodEmojis[currentMood]}
                     </p>
                   </div>
                 </div>
@@ -335,6 +307,28 @@ export function QuickChat({ onNavigate, currentMood, selectedLanguage }: QuickCh
 
             {/* Messages Area */}
             <div className="flex-1 p-6 overflow-y-auto space-y-4">
+              {messages.length === 0 && (
+                <div className="flex flex-col items-center justify-center h-full text-center space-y-4">
+                  <div 
+                    className="w-16 h-16 rounded-full flex items-center justify-center text-2xl"
+                    style={{ background: `var(--mood-gradient)` }}
+                  >
+                    🤖
+                  </div>
+                  <div>
+                    <h3 className="text-lg font-medium mb-2" style={{ color: `var(--mood-primary)` }}>
+                      AI Mental Health Assistant
+                    </h3>
+                    <p className="text-gray-600 max-w-md">
+                      Start a conversation and I'll provide personalized support. I can also detect your mood and adjust the theme to match how you're feeling.
+                    </p>
+                  </div>
+                  <div className="text-sm text-gray-500">
+                    Type a message below to begin...
+                  </div>
+                </div>
+              )}
+              
               <AnimatePresence>
                 {messages.map((msg, index) => (
                   <motion.div
@@ -344,11 +338,14 @@ export function QuickChat({ onNavigate, currentMood, selectedLanguage }: QuickCh
                     transition={{ delay: index * 0.1 }}
                     className={`flex gap-3 ${msg.sender === 'user' ? 'flex-row-reverse' : ''}`}
                   >
-                    {msg.sender !== 'user' && (
+                    {msg.sender === 'ai' && (
                       <div className="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center text-sm flex-shrink-0">
-                        {msg.sender === 'ai' && msg.supportType !== 'crisis' && moodEmojis[currentMood]}
-                        {msg.sender === 'ai' && msg.supportType === 'crisis' && '🚨'}
-                        {msg.sender === 'user' && '�'}
+                        {msg.supportType === 'crisis' ? '🚨' : moodEmojis[currentMood]}
+                      </div>
+                    )}
+                    {msg.sender === 'user' && (
+                      <div className="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center text-sm flex-shrink-0">
+                        👤
                       </div>
                     )}
                     
@@ -373,10 +370,15 @@ export function QuickChat({ onNavigate, currentMood, selectedLanguage }: QuickCh
                             className={`text-xs ${
                               msg.supportType === 'crisis' ? 'bg-red-100 text-red-800' :
                               msg.supportType === 'practical' ? 'bg-blue-100 text-blue-800' :
-                              'bg-green-100 text-green-800'
+                              msg.detectedMood === 'happy' ? 'bg-yellow-100 text-yellow-800' :
+                              msg.detectedMood === 'sad' ? 'bg-purple-100 text-purple-800' :
+                              msg.detectedMood === 'stressed' ? 'bg-orange-100 text-orange-800' :
+                              msg.detectedMood === 'anxious' ? 'bg-green-100 text-green-800' :
+                              msg.detectedMood === 'calm' ? 'bg-blue-100 text-blue-800' :
+                              'bg-gray-100 text-gray-800'
                             }`}
                           >
-                            {msg.supportType}
+                            {msg.detectedMood || msg.supportType}
                           </Badge>
                         )}
                       </div>
@@ -427,7 +429,7 @@ export function QuickChat({ onNavigate, currentMood, selectedLanguage }: QuickCh
                   <textarea
                     value={message}
                     onChange={(e) => setMessage(e.target.value)}
-                    onKeyPress={handleKeyPress}
+                    onKeyDown={handleKeyPress}
                     placeholder={t.typeMessage}
                     className="w-full p-4 border border-gray-200 rounded-2xl resize-none focus:outline-none focus:ring-2 focus:ring-opacity-50 pr-24"
                     style={{ '--tw-ring-color': `var(--mood-primary)` } as any}
