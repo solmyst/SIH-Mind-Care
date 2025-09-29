@@ -1,0 +1,16 @@
+# PostgreSQL Database Setup Commands for SIH Backend (Simplified)
+# Copy and paste these commands one by one in your terminal
+
+# When prompted, enter password: admin79***
+
+# 1. Create the database
+psql -U postgres -h localhost -p 5432 -d postgres -c "CREATE DATABASE sih_backend;"
+
+# 2. Test connection to your new database
+psql -U postgres -h localhost -p 5432 -d sih_backend -c "SELECT current_database(), version();"
+
+# 3. Optional: Check JSON capabilities (should show support)
+psql -U postgres -h localhost -p 5432 -d sih_backend -c "SELECT '{"test": "json"}'::json;"
+
+# That's it! No vector extension needed.
+# The AI features will work with keyword-based similarity instead of vector embeddings.

@@ -1,0 +1,39 @@
+# PostgreSQL Commands to Drop All Tables in sih_backend Database
+
+# Method 1: Drop all tables (keeping the database)
+psql -U postgres -h localhost -p 5432 -d sih_backend -c "
+DO \$\$
+DECLARE
+    r RECORD;
+BEGIN
+    -- Disable triggers
+    SET session_replication_role = replica;
+    
+    -- Drop all tables
+    FOR r IN (SELECT tablename FROM pg_tables WHERE schemaname = 'public') 
+    LOOP
+        EXECUTE 'DROP TABLE IF EXISTS ' || quote_ident(r.tablename) || ' CASCADE';
+        RAISE NOTICE 'Dropped table: %', r.tablename;
+    END LOOP;
+    
+    -- Re-enable triggers  
+    SET session_replication_role = DEFAULT;
+END
+\$\$;"
+
+# Method 2: Drop and recreate entire database (nuclear option)
+psql -U postgres -h localhost -p 5432 -d postgres -c "
+DROP DATABASE IF EXISTS sih_backend;
+CREATE DATABASE sih_backend;
+"
+
+# Method 3: Connect and run interactively
+# psql -U postgres -h localhost -p 5432 -d sih_backend
+# Then run the DROP commands manually
+
+echo "Database reset complete!"
+echo "Next steps:"
+echo "1. py manage.py makemigrations"  
+echo "2. py manage.py migrate"
+echo "3. py manage.py createsuperuser"
+echo "4. py manage.py setup_initial_data"
