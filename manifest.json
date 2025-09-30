@@ -1,0 +1,22 @@
+{
+  "name": "Mind Care Live - Digital Mental Wellness Platform",
+  "short_name": "Mind Care Live",
+  "description": "AI-powered mental wellness platform with mood detection and personalized support",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#4682B4",
+  "theme_color": "#4682B4",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["health", "medical", "wellness", "lifestyle"],
+  "lang": "en",
+  "scope": "/",
+  "prefer_related_applications": false
+}
