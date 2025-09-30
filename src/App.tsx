@@ -28,52 +28,52 @@ export interface MoodTheme {
 
 const moodThemes: Record<MoodType, MoodTheme> = {
   happy: {
-    primary: 'rgb(255, 193, 7)',
-    secondary: 'rgb(255, 152, 0)',
-    accent: 'rgb(255, 235, 59)',
-    gradient: 'linear-gradient(135deg, rgb(255, 193, 7) 0%, rgb(255, 152, 0) 100%)',
-    textLight: 'rgb(251, 140, 0)',
-    background: 'linear-gradient(135deg, rgb(255, 248, 225) 0%, rgb(255, 243, 205) 100%)'
+    primary: 'rgb(255, 165, 0)', // Orange - Energetic/Motivated
+    secondary: 'rgb(255, 193, 7)', // Yellow
+    accent: 'rgb(255, 255, 255)', // White for balance
+    gradient: 'linear-gradient(135deg, rgb(255, 165, 0) 0%, rgb(255, 193, 7) 100%)',
+    textLight: 'rgb(255, 140, 0)',
+    background: 'linear-gradient(135deg, rgb(255, 248, 240) 0%, rgb(255, 245, 220) 100%)'
   },
   calm: {
-    primary: 'rgb(33, 150, 243)',
-    secondary: 'rgb(0, 188, 212)',
-    accent: 'rgb(129, 199, 221)',
-    gradient: 'linear-gradient(135deg, rgb(33, 150, 243) 0%, rgb(0, 188, 212) 100%)',
-    textLight: 'rgb(3, 169, 244)',
-    background: 'linear-gradient(135deg, rgb(227, 242, 253) 0%, rgb(207, 232, 252) 100%)'
+    primary: 'rgb(70, 130, 180)', // Soft Blue - Calm/Relaxed
+    secondary: 'rgb(144, 238, 144)', // Light Green
+    accent: 'rgb(248, 248, 255)', // White/Light Gray
+    gradient: 'linear-gradient(135deg, rgb(70, 130, 180) 0%, rgb(144, 238, 144) 100%)',
+    textLight: 'rgb(100, 149, 237)',
+    background: 'linear-gradient(135deg, rgb(240, 248, 255) 0%, rgb(230, 255, 230) 100%)'
   },
   sad: {
-    primary: 'rgb(103, 58, 183)',
-    secondary: 'rgb(63, 81, 181)',
-    accent: 'rgb(159, 168, 218)',
-    gradient: 'linear-gradient(135deg, rgb(103, 58, 183) 0%, rgb(63, 81, 181) 100%)',
-    textLight: 'rgb(92, 107, 192)',
-    background: 'linear-gradient(135deg, rgb(237, 231, 246) 0%, rgb(225, 217, 240) 100%)'
+    primary: 'rgb(34, 139, 34)', // Green - Sad/Low Mood (promotes renewal)
+    secondary: 'rgb(135, 206, 235)', // Soft Blue
+    accent: 'rgb(255, 182, 193)', // Soft Pink
+    gradient: 'linear-gradient(135deg, rgb(34, 139, 34) 0%, rgb(135, 206, 235) 100%)',
+    textLight: 'rgb(60, 179, 113)',
+    background: 'linear-gradient(135deg, rgb(240, 255, 240) 0%, rgb(230, 245, 255) 100%)'
   },
   anxious: {
-    primary: 'rgb(76, 175, 80)',
-    secondary: 'rgb(0, 150, 136)',
-    accent: 'rgb(165, 214, 167)',
-    gradient: 'linear-gradient(135deg, rgb(76, 175, 80) 0%, rgb(0, 150, 136) 100%)',
-    textLight: 'rgb(26, 169, 133)',
-    background: 'linear-gradient(135deg, rgb(232, 245, 233) 0%, rgb(200, 230, 201) 100%)'
+    primary: 'rgb(30, 144, 255)', // Blue - Stressed/Anxious (calms stress)
+    secondary: 'rgb(60, 179, 113)', // Green secondary
+    accent: 'rgb(245, 245, 245)', // Soft Gray
+    gradient: 'linear-gradient(135deg, rgb(30, 144, 255) 0%, rgb(60, 179, 113) 100%)',
+    textLight: 'rgb(65, 105, 225)',
+    background: 'linear-gradient(135deg, rgb(240, 248, 255) 0%, rgb(240, 255, 240) 100%)'
   },
   stressed: {
-    primary: 'rgb(255, 138, 128)',
-    secondary: 'rgb(255, 171, 145)',
-    accent: 'rgb(255, 204, 188)',
-    gradient: 'linear-gradient(135deg, rgb(255, 138, 128) 0%, rgb(255, 171, 145) 100%)',
-    textLight: 'rgb(255, 112, 67)',
-    background: 'linear-gradient(135deg, rgb(255, 243, 237) 0%, rgb(255, 235, 225) 100%)'
+    primary: 'rgb(30, 144, 255)', // Blue primary - Stressed/Anxious
+    secondary: 'rgb(60, 179, 113)', // Green secondary
+    accent: 'rgb(245, 245, 245)', // Soft Gray
+    gradient: 'linear-gradient(135deg, rgb(30, 144, 255) 0%, rgb(60, 179, 113) 100%)',
+    textLight: 'rgb(65, 105, 225)',
+    background: 'linear-gradient(135deg, rgb(240, 248, 255) 0%, rgb(240, 255, 240) 100%)'
   },
   neutral: {
-    primary: 'rgb(158, 158, 158)',
-    secondary: 'rgb(189, 189, 189)',
-    accent: 'rgb(224, 224, 224)',
-    gradient: 'linear-gradient(135deg, rgb(158, 158, 158) 0%, rgb(189, 189, 189) 100%)',
-    textLight: 'rgb(117, 117, 117)',
-    background: 'linear-gradient(135deg, rgb(250, 250, 250) 0%, rgb(245, 245, 245) 100%)'
+    primary: 'rgb(147, 112, 219)', // Lavender - Mindful/Meditative
+    secondary: 'rgb(221, 160, 221)', // Soft Purple
+    accent: 'rgb(255, 240, 245)', // Pale Pink
+    gradient: 'linear-gradient(135deg, rgb(147, 112, 219) 0%, rgb(221, 160, 221) 100%)',
+    textLight: 'rgb(138, 43, 226)',
+    background: 'linear-gradient(135deg, rgb(248, 240, 255) 0%, rgb(255, 240, 245) 100%)'
   }
 };
 

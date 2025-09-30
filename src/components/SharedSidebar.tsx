@@ -41,7 +41,7 @@ export function SharedSidebar({
     { icon: Home, label: 'Dashboard', page: 'dashboard' as PageType },
     { icon: MessageCircle, label: 'AI Chat', page: 'chat' as PageType },
     { icon: Users, label: 'Peer Support', page: 'peer-support' as PageType },
-    { icon: Calendar, label: 'Appointment Booking', page: 'appointments' as PageType },
+    { icon: Calendar, label: 'Appointments', page: 'appointments' as PageType },
     { icon: TestTube, label: 'Test Assessments', page: 'tests' as PageType },
     { icon: BookOpen, label: 'Mood Journal', page: 'journal' as PageType },
     { icon: Target, label: 'Goals', page: 'goals' as PageType },

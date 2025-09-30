@@ -9,9 +9,10 @@ import { Badge } from './ui/badge';
 import { SharedSidebar } from './SharedSidebar';
 import { ImageWithFallback } from './figma/ImageWithFallback';
 import { LanguageSelector } from './LanguageSelector';
-import { 
+import { BreathingExercise } from './BreathingExercise';
+import {
   Home,
-  MessageCircle, 
+  MessageCircle,
   Calendar,
   BookOpen,
   Brain,
@@ -74,14 +75,14 @@ interface DashboardProps {
   onLanguageChange: (language: string) => void;
 }
 
-export function Dashboard({ 
-  onNavigate, 
-  currentMood, 
-  userProfile, 
-  setUserProfile, 
+export function Dashboard({
+  onNavigate,
+  currentMood,
+  userProfile,
+  setUserProfile,
   selectedLanguage,
   onMoodChange,
-  onLanguageChange 
+  onLanguageChange
 }: DashboardProps) {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [showSidebar, setShowSidebar] = useState(false);
@@ -90,7 +91,9 @@ export function Dashboard({
   const [showQuickActions, setShowQuickActions] = useState(true);
   const [timeOfDay, setTimeOfDay] = useState('morning');
   const [showMoodSelector, setShowMoodSelector] = useState(false);
-  const [activeResourceTab, setActiveResourceTab] = useState('breathe');
+  const [showBreathingExercise, setShowBreathingExercise] = useState(false);
+  const [breathingCompleted, setBreathingCompleted] = useState(false);
+  const [showMusicPlayer, setShowMusicPlayer] = useState(false);
 
   // Get time-based greeting
   useEffect(() => {
@@ -142,8 +145,8 @@ export function Dashboard({
   ];
 
   const quickActions = [
-    { icon: MessageCircle, label: 'Goal', page: 'goals' as PageType, color: 'from-blue-500 to-blue-600', description: 'Set Your Goals' },
-    { icon: Phone, label: 'Book Session', page: 'appointments' as PageType, color: 'from-green-500 to-green-600', description: 'Professional help' },
+    { icon: Wind, label: 'Breathe', action: () => setShowBreathingExercise(true), color: 'from-teal-500 to-cyan-600', description: 'Guided breathing' },
+    { icon: Headphones, label: 'Music', action: () => setShowMusicPlayer(true), color: 'from-blue-500 to-blue-600', description: 'Calming sounds' },
     { icon: BookOpen, label: 'Journal', page: 'journal' as PageType, color: 'from-purple-500 to-purple-600', description: 'Express yourself' },
     { icon: Gamepad2, label: 'Mini Games', page: 'games' as PageType, color: 'from-orange-500 to-orange-600', description: 'Stress relief' },
   ];
@@ -152,7 +155,7 @@ export function Dashboard({
     { name: 'Morning Mood Check', completed: true, icon: Heart, color: 'text-pink-500' },
     { name: 'Water Wellness Tree', completed: plantWatered, icon: Droplets, color: 'text-blue-500' },
     { name: 'Journal Entry', completed: false, icon: BookOpen, color: 'text-purple-500' },
-    { name: 'Mindful Breathing', completed: false, icon: Wind, color: 'text-green-500' },
+    { name: 'Mindful Breathing', completed: breathingCompleted, icon: Wind, color: 'text-green-500', onClick: () => setShowBreathingExercise(true) },
     { name: 'Gratitude Practice', completed: false, icon: Star, color: 'text-yellow-500' },
   ];
 
@@ -174,7 +177,7 @@ export function Dashboard({
   return (
     <div className="min-h-screen" style={{ background: `var(--mood-background)` }}>
       {/* Shared Sidebar */}
-      <SharedSidebar 
+      <SharedSidebar
         onNavigate={onNavigate}
         currentPage="dashboard"
         collapsed={sidebarCollapsed}
@@ -186,7 +189,7 @@ export function Dashboard({
       {/* Main Content */}
       <div className={`${sidebarCollapsed ? 'lg:ml-16' : 'lg:ml-64'} transition-all duration-300`}>
         {/* Floating Header with Glass Morphism */}
-        <motion.header 
+        <motion.header
           initial={{ y: -100, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           transition={{ duration: 0.6 }}
@@ -202,15 +205,15 @@ export function Dashboard({
                 >
                   <Menu className="w-5 h-5" />
                 </Button>
-                
-                <motion.div 
+
+                <motion.div
                   className="flex items-center gap-4"
                   initial={{ x: -50, opacity: 0 }}
                   animate={{ x: 0, opacity: 1 }}
                   transition={{ delay: 0.2 }}
                 >
                   <div className="relative">
-                    <motion.button 
+                    <motion.button
                       className="w-16 h-16 rounded-2xl flex items-center justify-center text-2xl shadow-xl backdrop-blur-sm border border-white/20 cursor-pointer group transition-all hover:shadow-2xl"
                       style={{ background: `var(--mood-gradient)` }}
                       whileHover={{ scale: 1.05, rotate: 5 }}
@@ -218,16 +221,16 @@ export function Dashboard({
                       onClick={() => setShowMoodSelector(!showMoodSelector)}
                       title="Click to change your mood"
                     >
-                      {currentMood === 'happy' ? '😊' : 
-                       currentMood === 'calm' ? '😌' : 
-                       currentMood === 'sad' ? '😢' : 
-                       currentMood === 'anxious' ? '😰' : 
-                       currentMood === 'stressed' ? '😫' : '😐'}
-                      
+                      {currentMood === 'happy' ? '😊' :
+                        currentMood === 'calm' ? '😌' :
+                          currentMood === 'sad' ? '😢' :
+                            currentMood === 'anxious' ? '😰' :
+                              currentMood === 'stressed' ? '😫' : '😐'}
+
                       {/* Click indicator */}
                       <div className="absolute inset-0 rounded-2xl bg-white/20 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none" />
                     </motion.button>
-                    <motion.div 
+                    <motion.div
                       className="absolute -bottom-2 -right-2 w-6 h-6 rounded-full bg-white shadow-lg flex items-center justify-center"
                       animate={{ scale: [1, 1.2, 1] }}
                       transition={{ repeat: Infinity, duration: 2 }}
@@ -235,26 +238,26 @@ export function Dashboard({
                       <TimeIcon className="w-3 h-3" style={{ color: `var(--mood-primary)` }} />
                     </motion.div>
                   </div>
-                  
+
                   <div>
-                    <motion.h1 
+                    <motion.h1
                       className="text-2xl bg-gradient-to-r from-gray-800 to-gray-600 bg-clip-text text-transparent"
                       initial={{ y: 20, opacity: 0 }}
                       animate={{ y: 0, opacity: 1 }}
                       transition={{ delay: 0.3 }}
                     >
-                      Good {timeOfDay}, {userProfile.name}! 
+                      Good {timeOfDay}, {userProfile.name}!
                     </motion.h1>
-                    <motion.p 
+                    <motion.p
                       className="text-gray-600 text-sm"
                       initial={{ y: 20, opacity: 0 }}
                       animate={{ y: 0, opacity: 1 }}
                       transition={{ delay: 0.4 }}
                     >
-                      {new Date().toLocaleDateString('en-US', { 
-                        weekday: 'long', 
-                        month: 'long', 
-                        day: 'numeric' 
+                      {new Date().toLocaleDateString('en-US', {
+                        weekday: 'long',
+                        month: 'long',
+                        day: 'numeric'
                       })} • Feeling {currentMood}
                     </motion.p>
                   </div>
@@ -271,8 +274,8 @@ export function Dashboard({
                   <Flame className="w-4 h-4 text-orange-500" />
                   <span className="text-sm font-medium text-gray-700">{userProfile.streakDays} day streak</span>
                 </motion.div>
-                
-                <LanguageSelector 
+
+                <LanguageSelector
                   selectedLanguage={selectedLanguage}
                   onLanguageChange={onLanguageChange}
                 />
@@ -282,7 +285,7 @@ export function Dashboard({
         </motion.header>
 
         {/* Hero Section */}
-        <motion.section 
+        <motion.section
           className="px-6 py-8"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
@@ -290,7 +293,7 @@ export function Dashboard({
         >
           <motion.div
             className="relative rounded-3xl p-8 overflow-hidden backdrop-blur-sm border border-white/20 shadow-2xl"
-            style={{ 
+            style={{
               background: `linear-gradient(135deg, rgba(255,255,255,0.9) 0%, rgba(255,255,255,0.7) 100%)`,
             }}
             whileHover={{ scale: 1.02 }}
@@ -302,7 +305,7 @@ export function Dashboard({
                 <motion.div
                   key={i}
                   className="absolute w-2 h-2 rounded-full"
-                  style={{ 
+                  style={{
                     background: `var(--mood-primary)`,
                     left: `${Math.random() * 100}%`,
                     top: `${Math.random() * 100}%`,
@@ -329,7 +332,7 @@ export function Dashboard({
               >
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-6">
-                    <motion.div 
+                    <motion.div
                       className="w-16 h-16 rounded-2xl flex items-center justify-center shadow-lg"
                       style={{ background: `var(--mood-gradient)` }}
                       whileHover={{ rotate: 10, scale: 1.1 }}
@@ -379,10 +382,10 @@ export function Dashboard({
                       Level {userProfile.level}
                     </Badge>
                   </div>
-                  
+
                   <motion.div
                     className="relative h-48 rounded-2xl overflow-hidden"
-                    style={{ 
+                    style={{
                       background: `linear-gradient(135deg, ${plantStage.color.split(' ')[1]} 0%, ${plantStage.color.split(' ')[3]} 100%)`,
                     }}
                   >
@@ -412,14 +415,14 @@ export function Dashboard({
                         ))}
                       </div>
                     )}
-                    
+
                     <motion.div
                       className="absolute inset-0 flex items-end justify-center pb-4 text-8xl"
-                      animate={{ 
+                      animate={{
                         scale: plantWatered ? [1, 1.1, 1] : [1, 1.05, 1],
                         rotate: plantWatered ? [0, -3, 3, 0] : 0
                       }}
-                      transition={{ 
+                      transition={{
                         duration: plantWatered ? 2 : 6,
                         repeat: Infinity,
                         ease: "easeInOut"
@@ -439,12 +442,12 @@ export function Dashboard({
                         {userProfile.plantGrowth}%
                       </span>
                     </div>
-                    
+
                     <div className="relative">
                       <Progress value={userProfile.plantGrowth} className="h-4 bg-gray-100" />
-                      <motion.div 
+                      <motion.div
                         className="absolute top-0 left-0 h-4 rounded-full opacity-30"
-                        style={{ 
+                        style={{
                           background: `var(--mood-gradient)`,
                           width: `${userProfile.plantGrowth}%`
                         }}
@@ -453,22 +456,21 @@ export function Dashboard({
                         transition={{ duration: 1.5, ease: "easeOut" }}
                       />
                     </div>
-                    
+
                     <p className="text-gray-600 italic">{plantStage.message}</p>
 
                     <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
                       <Button
                         onClick={waterPlant}
                         disabled={plantWatered}
-                        className={`w-full rounded-2xl h-12 font-medium transition-all ${
-                          plantWatered 
-                            ? 'bg-gradient-to-r from-green-500 to-emerald-600 text-white shadow-lg' 
-                            : 'text-white hover:scale-105 shadow-md'
-                        }`}
-                        style={{ 
-                          background: plantWatered 
-                            ? 'linear-gradient(135deg, #10B981 0%, #059669 100%)' 
-                            : `var(--mood-gradient)` 
+                        className={`w-full rounded-2xl h-12 font-medium transition-all ${plantWatered
+                          ? 'bg-gradient-to-r from-green-500 to-emerald-600 text-white shadow-lg'
+                          : 'text-white hover:scale-105 shadow-md'
+                          }`}
+                        style={{
+                          background: plantWatered
+                            ? 'linear-gradient(135deg, #10B981 0%, #059669 100%)'
+                            : `var(--mood-gradient)`
                         }}
                       >
                         <Droplets className="mr-3 h-5 w-5" />
@@ -493,12 +495,12 @@ export function Dashboard({
                       <div className="text-xs text-gray-500">completed</div>
                     </div>
                   </div>
-                  
+
                   <div className="relative">
                     <Progress value={(completedHabits / todaysHabits.length) * 100} className="h-3 bg-gray-100" />
-                    <motion.div 
+                    <motion.div
                       className="absolute top-0 left-0 h-3 rounded-full"
-                      style={{ 
+                      style={{
                         background: `var(--mood-gradient)`,
                         width: `${(completedHabits / todaysHabits.length) * 100}%`
                       }}
@@ -515,21 +517,20 @@ export function Dashboard({
                         initial={{ opacity: 0, x: -20 }}
                         animate={{ opacity: 1, x: 0 }}
                         transition={{ delay: index * 0.1 }}
-                        className={`flex items-center gap-4 p-4 rounded-2xl transition-all ${
-                          habit.completed 
-                            ? 'bg-gradient-to-r from-green-50 to-emerald-50 border border-green-200' 
-                            : 'bg-gray-50 hover:bg-gray-100'
-                        }`}
-                      >
-                        <motion.div 
-                          className={`w-10 h-10 rounded-xl flex items-center justify-center ${
-                            habit.completed ? 'bg-green-500 text-white' : 'bg-white shadow-sm'
+                        className={`flex items-center gap-4 p-4 rounded-2xl transition-all cursor-pointer ${habit.completed
+                          ? 'bg-gradient-to-r from-green-50 to-emerald-50 border border-green-200'
+                          : 'bg-gray-50 hover:bg-gray-100'
                           }`}
+                        onClick={habit.onClick}
+                      >
+                        <motion.div
+                          className={`w-10 h-10 rounded-xl flex items-center justify-center ${habit.completed ? 'bg-green-500 text-white' : 'bg-white shadow-sm'
+                            }`}
                           whileHover={{ scale: 1.1 }}
                           whileTap={{ scale: 0.9 }}
                         >
                           {habit.completed ? (
-                            <motion.span 
+                            <motion.span
                               className="text-sm"
                               initial={{ scale: 0 }}
                               animate={{ scale: 1 }}
@@ -564,12 +565,12 @@ export function Dashboard({
                   <h3 className="text-xl bg-gradient-to-r from-gray-800 to-gray-600 bg-clip-text text-transparent">
                     Quick Actions
                   </h3>
-                  
+
                   <div className="grid grid-cols-2 gap-4">
                     {quickActions.map((action, index) => (
                       <motion.button
-                        key={action.page}
-                        onClick={() => onNavigate(action.page)}
+                        key={action.page || action.label}
+                        onClick={() => action.page ? onNavigate(action.page) : action.action?.()}
                         className="group relative p-6 rounded-2xl bg-gradient-to-br from-gray-50 to-gray-100 hover:from-white hover:to-gray-50 transition-all"
                         whileHover={{ scale: 1.05, y: -5 }}
                         whileTap={{ scale: 0.95 }}
@@ -578,7 +579,7 @@ export function Dashboard({
                         transition={{ delay: index * 0.1 }}
                       >
                         <div className="text-center space-y-3">
-                          <motion.div 
+                          <motion.div
                             className={`w-14 h-14 mx-auto rounded-2xl bg-gradient-to-r ${action.color} flex items-center justify-center shadow-lg group-hover:shadow-xl transition-shadow`}
                             whileHover={{ rotate: 10 }}
                           >
@@ -589,7 +590,7 @@ export function Dashboard({
                             <p className="text-xs text-gray-500">{action.description}</p>
                           </div>
                         </div>
-                        
+
                         {/* Hover effect overlay */}
                         <div className="absolute inset-0 bg-gradient-to-br from-white/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity rounded-2xl" />
                       </motion.button>
@@ -623,7 +624,7 @@ export function Dashboard({
                       <BarChart3 className="w-4 h-4 text-gray-600" />
                     </motion.button>
                   </div>
-                  
+
                   <div className="space-y-4">
                     {weeklyStats.map((stat, index) => (
                       <motion.div
@@ -647,7 +648,7 @@ export function Dashboard({
                             {Math.round((stat.value / stat.total) * 100)}%
                           </div>
                           <div className="w-16 h-2 bg-white rounded-full overflow-hidden">
-                            <motion.div 
+                            <motion.div
                               className={`h-full ${stat.color.replace('text-', 'bg-')}`}
                               initial={{ width: 0 }}
                               animate={{ width: `${(stat.value / stat.total) * 100}%` }}
@@ -675,7 +676,7 @@ export function Dashboard({
                       <Sparkles className="w-5 h-5 text-yellow-500" />
                     </motion.div>
                   </div>
-                  
+
                   <div className="space-y-4">
                     {achievements.map((achievement, index) => (
                       <motion.div
@@ -686,7 +687,7 @@ export function Dashboard({
                         className="relative overflow-hidden"
                       >
                         <div className={`flex items-center gap-4 p-4 rounded-2xl ${achievement.color} text-white relative z-10`}>
-                          <motion.div 
+                          <motion.div
                             className="w-12 h-12 rounded-xl bg-white/20 backdrop-blur-sm flex items-center justify-center"
                             whileHover={{ scale: 1.1, rotate: 10 }}
                           >
@@ -707,7 +708,7 @@ export function Dashboard({
                             </motion.div>
                           )}
                         </div>
-                        
+
                         {/* Animated background pattern */}
                         <div className="absolute inset-0 opacity-10">
                           {Array.from({ length: 5 }).map((_, i) => (
@@ -739,321 +740,46 @@ export function Dashboard({
           </div>
         </main>
 
-        {/* Mental Health Resources Section */}
+        {/* Help Section */}
         <motion.section
           initial={{ opacity: 0, y: 50 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.8 }}
-          className="max-w-7xl mx-auto px-6 pb-12"
+          className="px-6 pb-12"
         >
-          <Card className="p-8 bg-white/80 backdrop-blur-sm rounded-3xl shadow-xl border-0">
-            {/* Header Tabs */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.9 }}
-              className="flex items-center justify-center gap-8 mb-8"
-            >
-              {[
-                { name: 'Breathe', icon: Wind, id: 'breathe' },
-                { name: 'Listen', icon: Headphones, id: 'listen' }
-              ].map((tab, index) => (
+          <Card className="p-6 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-2xl border border-blue-100">
+            <div className="flex flex-col md:flex-row items-center justify-between gap-4">
+              <div className="flex items-center gap-4">
+                <div className="w-12 h-12 rounded-2xl bg-blue-100 flex items-center justify-center flex-shrink-0">
+                  <Heart className="w-6 h-6 text-blue-600" />
+                </div>
+                <div className="text-center md:text-left">
+                  <h3 className="text-lg bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
+                    Need More Support?
+                  </h3>
+                  <p className="text-gray-600 text-sm">
+                    Access professional counseling and emergency resources
+                  </p>
+                </div>
+              </div>
+              <div className="flex flex-col sm:flex-row gap-3">
                 <motion.button
-                  key={tab.name}
-                  onClick={() => setActiveResourceTab(tab.id)}
-                  className={`flex items-center gap-3 px-8 py-4 rounded-2xl transition-all font-medium ${
-                    activeResourceTab === tab.id
-                      ? 'bg-blue-50 text-blue-600 border-2 border-blue-200 shadow-lg' 
-                      : 'text-gray-500 hover:text-gray-700 hover:bg-gray-50 border-2 border-transparent'
-                  }`}
+                  onClick={() => onNavigate('appointments')}
+                  className="px-6 py-3 bg-blue-500 hover:bg-blue-600 text-white rounded-xl font-medium shadow-lg hover:shadow-xl transition-all text-sm whitespace-nowrap"
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                 >
-                  <tab.icon className="w-5 h-5" />
-                  {tab.name}
+                  Book Session
                 </motion.button>
-              ))}
-            </motion.div>
-
-            <AnimatePresence mode="wait">
-              {activeResourceTab === 'breathe' && (
-                <motion.div
-                  key="breathe"
-                  initial={{ opacity: 0, x: -50 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0, x: 50 }}
-                  transition={{ duration: 0.3 }}
+                <motion.button
+                  className="px-6 py-3 bg-white text-gray-700 rounded-xl font-medium shadow-lg hover:shadow-xl transition-all border border-gray-200 text-sm whitespace-nowrap"
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
                 >
-                  {/* Section Title */}
-                  <motion.div
-                    initial={{ opacity: 0, x: -20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: 0.2 }}
-                    className="flex items-center gap-3 mb-8"
-                  >
-                    <div className="w-8 h-8 rounded-xl bg-blue-100 flex items-center justify-center">
-                      <Wind className="w-4 h-4 text-blue-600" />
-                    </div>
-                    <h2 className="text-2xl bg-gradient-to-r from-gray-800 to-gray-600 bg-clip-text text-transparent">
-                      Breathing Exercises
-                    </h2>
-                  </motion.div>
-
-                  {/* Exercise Cards */}
-                  <div className="grid md:grid-cols-3 gap-6 mb-8">
-                    {[
-                      {
-                        title: "4-7-8 Technique",
-                        description: "Inhale 4s, Hold 7s, Exhale 8s",
-                        duration: "4m",
-                        color: "bg-blue-500",
-                        hoverColor: "hover:bg-blue-600",
-                        icon: "⏱️",
-                        gradient: "from-blue-500 to-blue-600"
-                      },
-                      {
-                        title: "Box Breathing",
-                        description: "Equal counts of 4 seconds each",
-                        duration: "3m",
-                        color: "bg-purple-500",
-                        hoverColor: "hover:bg-purple-600",
-                        icon: "⭕",
-                        gradient: "from-purple-500 to-purple-600"
-                      },
-                      {
-                        title: "Calming Breath",
-                        description: "Slow, deep breathing for relaxation",
-                        duration: "5m",
-                        color: "bg-green-500",
-                        hoverColor: "hover:bg-green-600",
-                        icon: "🌊",
-                        gradient: "from-green-500 to-green-600"
-                      }
-                    ].map((exercise, index) => (
-                      <motion.div
-                        key={exercise.title}
-                        initial={{ opacity: 0, y: 30 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.6, delay: 0.3 + index * 0.1 }}
-                        whileHover={{ y: -8, scale: 1.02 }}
-                        className="cursor-pointer"
-                      >
-                        <Card className="p-6 bg-white/90 backdrop-blur-sm rounded-2xl shadow-lg border-0 hover:shadow-2xl transition-all duration-300 h-full relative overflow-hidden">
-                          {/* Exercise Icon */}
-                          <motion.div
-                            className={`w-16 h-16 rounded-2xl ${exercise.color} flex items-center justify-center text-white text-2xl mb-6 mx-auto shadow-lg`}
-                            whileHover={{ rotate: 10, scale: 1.1 }}
-                          >
-                            {exercise.icon}
-                          </motion.div>
-
-                          {/* Exercise Content */}
-                          <div className="text-center space-y-3">
-                            <h3 className="text-xl bg-gradient-to-r from-gray-800 to-gray-600 bg-clip-text text-transparent">
-                              {exercise.title}
-                            </h3>
-                            
-                            <p className="text-gray-600 text-sm">
-                              {exercise.description}
-                            </p>
-
-                            {/* Duration */}
-                            <div className="flex items-center justify-center gap-2 text-gray-500 text-sm">
-                              <Clock className="w-4 h-4" />
-                              {exercise.duration}
-                            </div>
-                          </div>
-
-                          {/* Start Button */}
-                          <motion.button
-                            className={`w-full mt-6 py-3 px-4 ${exercise.color} ${exercise.hoverColor} text-white rounded-2xl font-medium shadow-lg hover:shadow-xl transition-all`}
-                            whileHover={{ scale: 1.05, y: -2 }}
-                            whileTap={{ scale: 0.95 }}
-                            onClick={() => onNavigate('games')}
-                          >
-                            Start Exercise
-                          </motion.button>
-
-                          {/* Subtle gradient overlay */}
-                          <div className={`absolute inset-0 bg-gradient-to-br ${exercise.gradient} opacity-5 rounded-2xl`} />
-                        </Card>
-                      </motion.div>
-                    ))}
-                  </div>
-                </motion.div>
-              )}
-
-              {activeResourceTab === 'listen' && (
-                <motion.div
-                  key="listen"
-                  initial={{ opacity: 0, x: 50 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0, x: -50 }}
-                  transition={{ duration: 0.3 }}
-                >
-                  {/* Section Title */}
-                  <motion.div
-                    initial={{ opacity: 0, x: -20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: 0.2 }}
-                    className="flex items-center gap-3 mb-8"
-                  >
-                    <div className="w-8 h-8 rounded-xl bg-purple-100 flex items-center justify-center">
-                      <Headphones className="w-4 h-4 text-purple-600" />
-                    </div>
-                    <h2 className="text-2xl bg-gradient-to-r from-gray-800 to-gray-600 bg-clip-text text-transparent">
-                      Audio Therapy & Music
-                    </h2>
-                  </motion.div>
-
-                  {/* Music Categories */}
-                  <div className="grid md:grid-cols-3 gap-6 mb-8">
-                    {[
-                      {
-                        title: "Nature Sounds",
-                        description: "Calming sounds from nature",
-                        duration: "30m",
-                        color: "bg-green-500",
-                        hoverColor: "hover:bg-green-600",
-                        icon: "🌲",
-                        gradient: "from-green-500 to-green-600",
-                        tracks: ["Rain & Thunder", "Ocean Waves", "Forest Birds"]
-                      },
-                      {
-                        title: "Meditation Music",
-                        description: "Peaceful instrumental music",
-                        duration: "45m",
-                        color: "bg-purple-500",
-                        hoverColor: "hover:bg-purple-600",
-                        icon: "🎵",
-                        gradient: "from-purple-500 to-purple-600",
-                        tracks: ["Tibetan Bowls", "Piano Harmony", "Ambient Space"]
-                      },
-                      {
-                        title: "Guided Sessions",
-                        description: "Voice-guided relaxation",
-                        duration: "20m",
-                        color: "bg-blue-500",
-                        hoverColor: "hover:bg-blue-600",
-                        icon: "🧘‍♀️",
-                        gradient: "from-blue-500 to-blue-600",
-                        tracks: ["Body Scan", "Sleep Stories", "Anxiety Relief"]
-                      }
-                    ].map((category, index) => (
-                      <motion.div
-                        key={category.title}
-                        initial={{ opacity: 0, y: 30 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.6, delay: 0.3 + index * 0.1 }}
-                        whileHover={{ y: -8, scale: 1.02 }}
-                        className="cursor-pointer"
-                      >
-                        <Card className="p-6 bg-white/90 backdrop-blur-sm rounded-2xl shadow-lg border-0 hover:shadow-2xl transition-all duration-300 h-full relative overflow-hidden">
-                          {/* Category Icon */}
-                          <motion.div
-                            className={`w-16 h-16 rounded-2xl ${category.color} flex items-center justify-center text-white text-2xl mb-6 mx-auto shadow-lg`}
-                            whileHover={{ rotate: 10, scale: 1.1 }}
-                          >
-                            {category.icon}
-                          </motion.div>
-
-                          {/* Category Content */}
-                          <div className="text-center space-y-3">
-                            <h3 className="text-xl bg-gradient-to-r from-gray-800 to-gray-600 bg-clip-text text-transparent">
-                              {category.title}
-                            </h3>
-                            
-                            <p className="text-gray-600 text-sm">
-                              {category.description}
-                            </p>
-
-                            {/* Duration */}
-                            <div className="flex items-center justify-center gap-2 text-gray-500 text-sm mb-4">
-                              <Clock className="w-4 h-4" />
-                              {category.duration}
-                            </div>
-
-                            {/* Track List */}
-                            <div className="space-y-2 text-left">
-                              {category.tracks.map((track, trackIndex) => (
-                                <motion.div
-                                  key={track}
-                                  initial={{ opacity: 0, x: -10 }}
-                                  animate={{ opacity: 1, x: 0 }}
-                                  transition={{ delay: 0.5 + index * 0.1 + trackIndex * 0.05 }}
-                                  className="flex items-center gap-3 p-2 rounded-xl hover:bg-gray-50 transition-colors"
-                                >
-                                  <div className={`w-2 h-2 rounded-full ${category.color.replace('bg-', 'bg-')}`} />
-                                  <span className="text-gray-700 text-sm">{track}</span>
-                                  <div className="ml-auto">
-                                    <Play className="w-3 h-3 text-gray-400" />
-                                  </div>
-                                </motion.div>
-                              ))}
-                            </div>
-                          </div>
-
-                          {/* Play Button */}
-                          <motion.button
-                            className={`w-full mt-6 py-3 px-4 ${category.color} ${category.hoverColor} text-white rounded-2xl font-medium shadow-lg hover:shadow-xl transition-all flex items-center justify-center gap-2`}
-                            whileHover={{ scale: 1.05, y: -2 }}
-                            whileTap={{ scale: 0.95 }}
-                            onClick={() => onNavigate('games')}
-                          >
-                            <Play className="w-4 h-4" />
-                            Play Collection
-                          </motion.button>
-
-                          {/* Subtle gradient overlay */}
-                          <div className={`absolute inset-0 bg-gradient-to-br ${category.gradient} opacity-5 rounded-2xl`} />
-                        </Card>
-                      </motion.div>
-                    ))}
-                  </div>
-                </motion.div>
-              )}
-            </AnimatePresence>
-
-            {/* Bottom Help Section */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.6 }}
-              className="p-6 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-2xl border border-blue-100"
-            >
-              <div className="flex flex-col md:flex-row items-center justify-between gap-4">
-                <div className="flex items-center gap-4">
-                  <div className="w-12 h-12 rounded-2xl bg-blue-100 flex items-center justify-center flex-shrink-0">
-                    <Heart className="w-6 h-6 text-blue-600" />
-                  </div>
-                  <div className="text-center md:text-left">
-                    <h3 className="text-lg bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
-                      Need More Support?
-                    </h3>
-                    <p className="text-gray-600 text-sm">
-                      Access professional counseling and emergency resources
-                    </p>
-                  </div>
-                </div>
-                <div className="flex flex-col sm:flex-row gap-3">
-                  <motion.button
-                    onClick={() => onNavigate('appointments')}
-                    className="px-6 py-3 bg-blue-500 hover:bg-blue-600 text-white rounded-xl font-medium shadow-lg hover:shadow-xl transition-all text-sm whitespace-nowrap"
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                  >
-                    Book Session
-                  </motion.button>
-                  <motion.button
-                    className="px-6 py-3 bg-white text-gray-700 rounded-xl font-medium shadow-lg hover:shadow-xl transition-all border border-gray-200 text-sm whitespace-nowrap"
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                  >
-                    Crisis Line: 988
-                  </motion.button>
-                </div>
+                  Tele-MANAS - 14416
+                </motion.button>
               </div>
-            </motion.div>
+            </div>
           </Card>
         </motion.section>
 
@@ -1095,7 +821,7 @@ export function Dashboard({
                 exit={{ opacity: 0 }}
                 onClick={() => setShowMoodSelector(false)}
               />
-              
+
               {/* Mood Selector Modal */}
               <motion.div
                 className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-50"
@@ -1114,7 +840,7 @@ export function Dashboard({
                         Select your current mood
                       </p>
                     </div>
-                    
+
                     <div className="grid grid-cols-2 gap-3">
                       {moodOptions.map((option) => (
                         <motion.button
@@ -1123,13 +849,12 @@ export function Dashboard({
                             onMoodChange(option.mood);
                             setShowMoodSelector(false);
                           }}
-                          className={`flex items-center gap-3 px-4 py-4 rounded-2xl transition-all font-medium ${
-                            currentMood === option.mood
-                              ? 'text-white shadow-lg'
-                              : `${option.bgColor} text-gray-700`
-                          }`}
-                          style={currentMood === option.mood ? { 
-                            background: `var(--mood-gradient)` 
+                          className={`flex items-center gap-3 px-4 py-4 rounded-2xl transition-all font-medium ${currentMood === option.mood
+                            ? 'text-white shadow-lg'
+                            : `${option.bgColor} text-gray-700`
+                            }`}
+                          style={currentMood === option.mood ? {
+                            background: `var(--mood-gradient)`
                           } : {}}
                           whileHover={{ scale: 1.05 }}
                           whileTap={{ scale: 0.95 }}
@@ -1147,7 +872,7 @@ export function Dashboard({
                     <div className="space-y-4">
                       <div className="flex justify-between items-center">
                         <span className="text-sm text-gray-600 font-medium">Intensity Level</span>
-                        <motion.span 
+                        <motion.span
                           className="text-sm font-bold px-3 py-1 rounded-full bg-gray-100"
                           style={{ color: `var(--mood-primary)` }}
                           key={currentMoodIntensity}
@@ -1195,6 +920,118 @@ export function Dashboard({
           )}
         </AnimatePresence>
       </div>
+
+      {/* Breathing Exercise Modal */}
+      <AnimatePresence>
+        {showBreathingExercise && (
+          <BreathingExercise
+            currentMood={currentMood}
+            onClose={() => {
+              setShowBreathingExercise(false);
+              setBreathingCompleted(true);
+            }}
+          />
+        )}
+      </AnimatePresence>
+
+      {/* Music Player Modal */}
+      <AnimatePresence>
+        {showMusicPlayer && (
+          <>
+            {/* Background Overlay */}
+            <motion.div
+              className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setShowMusicPlayer(false)}
+            />
+
+            {/* Music Player Modal */}
+            <motion.div
+              className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-50"
+              initial={{ scale: 0.8, opacity: 0, y: 50 }}
+              animate={{ scale: 1, opacity: 1, y: 0 }}
+              exit={{ scale: 0.8, opacity: 0, y: 50 }}
+              transition={{ type: "spring", stiffness: 300, damping: 30 }}
+            >
+              <Card className="p-8 bg-white/95 backdrop-blur-xl rounded-3xl shadow-2xl border-0 max-w-md w-full mx-4">
+                <div className="space-y-6">
+                  <div className="text-center">
+                    <motion.div
+                      className="w-16 h-16 mx-auto rounded-2xl flex items-center justify-center text-2xl shadow-lg mb-4"
+                      style={{ background: `var(--mood-gradient)` }}
+                      animate={{ rotate: [0, 10, -10, 0] }}
+                      transition={{ repeat: Infinity, duration: 4 }}
+                    >
+                      <Headphones className="w-8 h-8 text-white" />
+                    </motion.div>
+                    <h3 className="text-2xl mb-2 bg-gradient-to-r from-gray-800 to-gray-600 bg-clip-text text-transparent">
+                      Calming Music
+                    </h3>
+                    <p className="text-gray-600">
+                      Choose your relaxation soundtrack
+                    </p>
+                  </div>
+
+                  <div className="space-y-3">
+                    {[
+                      { name: 'Nature Sounds', icon: '🌲', duration: '30m', description: 'Rain, ocean, forest' },
+                      { name: 'Meditation Music', icon: '🎵', duration: '45m', description: 'Peaceful instrumentals' },
+                      { name: 'Ambient Space', icon: '🌌', duration: '60m', description: 'Cosmic soundscapes' },
+                      { name: 'Piano Harmony', icon: '🎹', duration: '25m', description: 'Gentle piano melodies' },
+                    ].map((track, index) => (
+                      <motion.button
+                        key={track.name}
+                        className="w-full flex items-center gap-4 p-4 rounded-2xl bg-gray-50 hover:bg-gray-100 transition-all text-left"
+                        whileHover={{ scale: 1.02, x: 5 }}
+                        whileTap={{ scale: 0.98 }}
+                        initial={{ opacity: 0, x: -20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ delay: index * 0.1 }}
+                        onClick={() => {
+                          // Simulate playing music
+                          setShowMusicPlayer(false);
+                          // You can add actual music playing logic here
+                        }}
+                      >
+                        <div className="w-12 h-12 rounded-xl bg-white shadow-sm flex items-center justify-center text-xl">
+                          {track.icon}
+                        </div>
+                        <div className="flex-1">
+                          <p className="font-medium text-gray-800">{track.name}</p>
+                          <p className="text-sm text-gray-500">{track.description}</p>
+                        </div>
+                        <div className="text-right">
+                          <p className="text-sm font-medium text-gray-600">{track.duration}</p>
+                          <Play className="w-4 h-4 text-gray-400 mx-auto mt-1" />
+                        </div>
+                      </motion.button>
+                    ))}
+                  </div>
+
+                  <div className="flex gap-3">
+                    <Button
+                      onClick={() => setShowMusicPlayer(false)}
+                      variant="outline"
+                      className="flex-1 rounded-2xl"
+                    >
+                      Close
+                    </Button>
+                    <Button
+                      onClick={() => onNavigate('games')}
+                      className="flex-1 rounded-2xl text-white"
+                      style={{ background: `var(--mood-gradient)` }}
+                    >
+                      More Music
+                    </Button>
+                  </div>
+                </div>
+              </Card>
+            </motion.div>
+          </>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

@@ -95,7 +95,7 @@ export async function generateGeminiContent(prompt: string, systemPrompt: string
     throw new Error('Gemini API key not found. Please check your .env file.');
   }
   
-  const endpoint = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent";
+  const endpoint = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-pro:generateContent";
 
   const body = {
     contents: [
