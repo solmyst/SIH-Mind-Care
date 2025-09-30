@@ -60,7 +60,9 @@
             "dev": "vite",
             "build": "vite build",
             "preview": "vite preview",
-            "deploy": "npm run build && echo 'Build complete! Upload the dist folder to your hosting service.'",
+            "predeploy": "npm run build",
+            "deploy": "gh-pages -d dist",
+            "deploy:github": "npm run build && gh-pages -d dist -b gh-pages",
             "clean": "rm -rf dist node_modules",
             "reinstall": "npm run clean && npm install"
       }

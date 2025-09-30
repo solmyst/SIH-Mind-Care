@@ -1,31 +1,45 @@
 @echo off
-echo 🚀 Deploying Mind Care Live...
+echo 🚀 Starting deployment to GitHub Pages...
 
-REM Remove node_modules and dist
-echo 🧹 Cleaning up...
-if exist node_modules rmdir /s /q node_modules
-if exist dist rmdir /s /q dist
+echo 📦 Building the project...
+call npm run build
 
-REM Install dependencies
-echo 📦 Installing dependencies...
-npm install
-
-REM Build the project
-echo 🔨 Building project...
-npm run build
-
-REM Check if build was successful
-if exist dist (
-    echo ✅ Build successful!
-    echo 📁 Built files are in the 'dist' folder
-    echo.
-    echo 🌐 Next steps:
-    echo 1. Upload the contents of the 'dist' folder to your web server
-    echo 2. Point mind-care.live domain to your hosting service
-    echo 3. Set environment variable: VITE_GEMINI_API_KEY
-    echo.
-    echo 🎉 Your Digital Mental Wellness Platform is ready!
-) else (
+if %errorlevel% neq 0 (
     echo ❌ Build failed!
+    pause
     exit /b 1
 )
+
+echo ✅ Build completed successfully!
+
+echo 📁 Preparing deployment files...
+if exist gh-pages-temp rmdir /s /q gh-pages-temp
+mkdir gh-pages-temp
+
+echo 📋 Copying files...
+xcopy dist\* gh-pages-temp\ /s /e /q
+
+echo 📄 Adding deployment files...
+echo. > gh-pages-temp\.nojekyll
+
+cd gh-pages-temp
+git init
+git add .
+git commit -m "Deploy Mind Care Live to GitHub Pages"
+
+echo 🌐 Deploying to GitHub Pages...
+git branch -M gh-pages
+REM Replace YOUR_USERNAME with your actual GitHub username
+git remote add origin https://github.com/YOUR_USERNAME/mind-care-live.git
+git push -f origin gh-pages
+
+cd ..
+rmdir /s /q gh-pages-temp
+
+echo 🎉 Deployment completed!
+echo 🌐 Your site will be available at: https://mind-care.live/
+echo ⚠️  Don't forget to:
+echo    1. Create the GitHub repository first
+echo    2. Configure DNS for mind-care.live to point to GitHub Pages
+echo    3. Enable GitHub Pages in repository settings
+pause
