@@ -145,7 +145,7 @@ export function Dashboard({
   ];
 
   const quickActions = [
-    { icon: Wind, label: 'Breathe', action: () => setShowBreathingExercise(true), color: 'from-teal-500 to-cyan-600', description: 'Guided breathing' },
+    { icon: Wind, label: 'Breathe', action: () => setShowBreathingExercise(true), color: 'from-green-500 to-green-600', description: 'Guided breathing' },
     { icon: Headphones, label: 'Music', action: () => setShowMusicPlayer(true), color: 'from-blue-500 to-blue-600', description: 'Calming sounds' },
     { icon: BookOpen, label: 'Journal', page: 'journal' as PageType, color: 'from-purple-500 to-purple-600', description: 'Express yourself' },
     { icon: Gamepad2, label: 'Mini Games', page: 'games' as PageType, color: 'from-orange-500 to-orange-600', description: 'Stress relief' },
