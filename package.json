@@ -2,7 +2,7 @@
       "name": "mind-care-live",
       "version": "1.0.0",
       "private": false,
-      "homepage": "https://solmyst.github.io/SIH-mind-care",
+      "homepage": "www.mind-care.live",
       "description": "AI-powered Digital Mental Wellness Platform with mood detection and dynamic theming",
       "dependencies": {
             "@radix-ui/react-accordion": "^1.2.3",
@@ -59,6 +59,8 @@
       "scripts": {
             "dev": "vite",
             "build": "vite build",
+           "predeploy": "npm run build",
+  "deploy": "gh-pages -d build",
             "preview": "vite preview"
       }
 }
