@@ -94,6 +94,8 @@ export function Dashboard({
   const [showBreathingExercise, setShowBreathingExercise] = useState(false);
   const [breathingCompleted, setBreathingCompleted] = useState(false);
   const [showMusicPlayer, setShowMusicPlayer] = useState(false);
+  const [aiMoodSuggestions, setAiMoodSuggestions] = useState<MoodType[]>([]);
+  const [showMoodSuggestions, setShowMoodSuggestions] = useState(false);
 
   // Get time-based greeting
   useEffect(() => {
@@ -135,13 +137,43 @@ export function Dashboard({
 
   const plantStage = getPlantStage(userProfile.plantGrowth);
 
+  // AI Mood Suggestion System
+  const getMoodSuggestions = (currentMood: MoodType): MoodType[] => {
+    const moodRelations: Record<MoodType, MoodType[]> = {
+      happy: ['calm', 'neutral', 'comforted'], // From energetic to more balanced
+      calm: ['neutral', 'sleepy', 'comforted'], // Deeper relaxation states
+      neutral: ['calm', 'happy', 'comforted'], // Can go in multiple directions
+      comforted: ['calm', 'sleepy', 'neutral'], // Peaceful transitions
+      stressed: ['calm', 'neutral', 'comforted'], // Stress relief options
+      anxious: ['calm', 'comforted', 'neutral'], // Anxiety management
+      sad: ['comforted', 'calm', 'neutral'], // Emotional support and balance
+      sleepy: ['calm', 'neutral', 'comforted'], // Restful states
+      alert: ['calm', 'neutral', 'comforted'] // De-escalation options
+    };
+    return moodRelations[currentMood] || ['calm', 'neutral'];
+  };
+
+  // Generate AI suggestions when mood changes
+  useEffect(() => {
+    const suggestions = getMoodSuggestions(currentMood);
+    setAiMoodSuggestions(suggestions);
+    
+    // Show suggestions briefly when mood changes
+    setShowMoodSuggestions(true);
+    const timer = setTimeout(() => setShowMoodSuggestions(false), 5000);
+    return () => clearTimeout(timer);
+  }, [currentMood]);
+
   const moodOptions: { mood: MoodType; emoji: string; label: string; color: string; bgColor: string }[] = [
-    { mood: 'happy', emoji: '😊', label: 'Happy', color: '#FFB800', bgColor: 'bg-yellow-100 hover:bg-yellow-200' },
-    { mood: 'calm', emoji: '😌', label: 'Calm', color: '#2196F3', bgColor: 'bg-blue-100 hover:bg-blue-200' },
-    { mood: 'neutral', emoji: '😐', label: 'Neutral', color: '#9E9E9E', bgColor: 'bg-gray-100 hover:bg-gray-200' },
-    { mood: 'anxious', emoji: '😰', label: 'Anxious', color: '#4CAF50', bgColor: 'bg-green-100 hover:bg-green-200' },
-    { mood: 'sad', emoji: '😢', label: 'Sad', color: '#673AB7', bgColor: 'bg-purple-100 hover:bg-purple-200' },
-    { mood: 'stressed', emoji: '😫', label: 'Stressed', color: '#FF8A80', bgColor: 'bg-red-100 hover:bg-red-200' },
+    { mood: 'calm', emoji: '😌', label: 'Calm', color: '#4682B4', bgColor: 'bg-blue-100 hover:bg-blue-200' },
+    { mood: 'happy', emoji: '😊', label: 'Focused', color: '#1E90FF', bgColor: 'bg-blue-100 hover:bg-blue-200' },
+    { mood: 'neutral', emoji: '🧘‍♀️', label: 'Mindful', color: '#9370DB', bgColor: 'bg-purple-100 hover:bg-purple-200' },
+    { mood: 'comforted', emoji: '🤗', label: 'Comforted', color: '#FFB6C1', bgColor: 'bg-pink-100 hover:bg-pink-200' },
+    { mood: 'stressed', emoji: '⚡', label: 'Energetic', color: '#FFA500', bgColor: 'bg-orange-100 hover:bg-orange-200' },
+    { mood: 'anxious', emoji: '😰', label: 'Anxious', color: '#1E90FF', bgColor: 'bg-blue-100 hover:bg-blue-200' },
+    { mood: 'sad', emoji: '😢', label: 'Low Mood', color: '#228B22', bgColor: 'bg-green-100 hover:bg-green-200' },
+    { mood: 'sleepy', emoji: '😴', label: 'Sleepy', color: '#9370DB', bgColor: 'bg-purple-100 hover:bg-purple-200' },
+    { mood: 'alert', emoji: '🚨', label: 'Alert', color: '#FF0000', bgColor: 'bg-red-100 hover:bg-red-200' },
   ];
 
   const quickActions = [
@@ -221,11 +253,15 @@ export function Dashboard({
                       onClick={() => setShowMoodSelector(!showMoodSelector)}
                       title="Click to change your mood"
                     >
-                      {currentMood === 'happy' ? '😊' :
-                        currentMood === 'calm' ? '😌' :
-                          currentMood === 'sad' ? '😢' :
-                            currentMood === 'anxious' ? '😰' :
-                              currentMood === 'stressed' ? '😫' : '😐'}
+                      {currentMood === 'calm' ? '😌' :
+                        currentMood === 'happy' ? '😊' :
+                          currentMood === 'neutral' ? '🧘‍♀️' :
+                            currentMood === 'comforted' ? '🤗' :
+                              currentMood === 'stressed' ? '⚡' :
+                                currentMood === 'anxious' ? '😰' :
+                                  currentMood === 'sad' ? '😢' :
+                                    currentMood === 'sleepy' ? '😴' :
+                                      currentMood === 'alert' ? '🚨' : '😐'}
 
                       {/* Click indicator */}
                       <div className="absolute inset-0 rounded-2xl bg-white/20 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none" />
@@ -360,6 +396,94 @@ export function Dashboard({
             </div>
           </motion.div>
         </motion.section>
+
+        {/* AI Mood Suggestions */}
+        <AnimatePresence>
+          {showMoodSuggestions && aiMoodSuggestions.length > 0 && (
+            <motion.section
+              initial={{ opacity: 0, y: -50, scale: 0.9 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: -50, scale: 0.9 }}
+              transition={{ duration: 0.5, type: "spring" }}
+              className="px-6 pb-6"
+            >
+              <motion.div
+                className="relative rounded-2xl p-6 overflow-hidden backdrop-blur-sm border border-white/20 shadow-xl"
+                style={{ 
+                  background: `linear-gradient(135deg, rgba(255,255,255,0.95) 0%, rgba(255,255,255,0.85) 100%)`,
+                }}
+              >
+                {/* AI Icon and Header */}
+                <div className="flex items-center gap-4 mb-4">
+                  <motion.div 
+                    className="w-12 h-12 rounded-xl flex items-center justify-center shadow-lg"
+                    style={{ background: `var(--mood-gradient)` }}
+                    animate={{ rotate: [0, 10, -10, 0] }}
+                    transition={{ repeat: Infinity, duration: 4 }}
+                  >
+                    <Sparkles className="w-6 h-6 text-white" />
+                  </motion.div>
+                  <div>
+                    <h3 className="text-lg font-semibold bg-gradient-to-r from-gray-800 to-gray-600 bg-clip-text text-transparent">
+                      AI Mood Suggestions
+                    </h3>
+                    <p className="text-gray-600 text-sm">
+                      Based on your current mood: <span className="font-medium capitalize">{currentMood}</span>
+                    </p>
+                  </div>
+                  <motion.button
+                    onClick={() => setShowMoodSuggestions(false)}
+                    className="ml-auto p-2 rounded-full hover:bg-gray-100 transition-colors"
+                    whileHover={{ scale: 1.1 }}
+                    whileTap={{ scale: 0.9 }}
+                  >
+                    <X className="w-4 h-4 text-gray-500" />
+                  </motion.button>
+                </div>
+
+                {/* Suggested Moods */}
+                <div className="flex flex-wrap gap-3">
+                  {aiMoodSuggestions.map((suggestedMood, index) => {
+                    const moodOption = moodOptions.find(m => m.mood === suggestedMood);
+                    if (!moodOption) return null;
+                    
+                    return (
+                      <motion.button
+                        key={suggestedMood}
+                        onClick={() => {
+                          onMoodChange(suggestedMood);
+                          setShowMoodSuggestions(false);
+                        }}
+                        className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-all font-medium ${moodOption.bgColor} text-gray-700 hover:scale-105 hover:shadow-md`}
+                        initial={{ opacity: 0, x: -20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ delay: index * 0.1 }}
+                        whileHover={{ y: -2 }}
+                        whileTap={{ scale: 0.95 }}
+                      >
+                        <span className="text-xl">{moodOption.emoji}</span>
+                        <span className="text-sm">{moodOption.label}</span>
+                        <ChevronRight className="w-4 h-4 opacity-60" />
+                      </motion.button>
+                    );
+                  })}
+                </div>
+
+                {/* AI Explanation */}
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ delay: 0.5 }}
+                  className="mt-4 p-3 bg-blue-50 rounded-xl border border-blue-100"
+                >
+                  <p className="text-xs text-blue-700 italic">
+                    💡 AI suggests these moods to help you transition to a more balanced emotional state
+                  </p>
+                </motion.div>
+              </motion.div>
+            </motion.section>
+          )}
+        </AnimatePresence>
 
         {/* Main Dashboard Grid */}
         <main className="px-6 pb-8">
@@ -906,11 +1030,15 @@ export function Dashboard({
                         Close
                       </Button>
                       <Button
-                        onClick={() => onNavigate('journal')}
-                        className="flex-1 rounded-2xl text-white"
+                        onClick={() => {
+                          setShowMoodSuggestions(true);
+                          setShowMoodSelector(false);
+                        }}
+                        className="flex-1 rounded-2xl text-white flex items-center gap-2"
                         style={{ background: `var(--mood-gradient)` }}
                       >
-                        Track in Journal
+                        <Sparkles className="w-4 h-4" />
+                        AI Suggest
                       </Button>
                     </div>
                   </div>
