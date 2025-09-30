@@ -1,0 +1,8 @@
+User-agent: *
+Allow: /
+
+# Sitemap
+Sitemap: /sitemap.xml
+
+# Mind Care Live - Digital Mental Wellness Platform
+# Promoting mental health and wellness through AI-powered support
